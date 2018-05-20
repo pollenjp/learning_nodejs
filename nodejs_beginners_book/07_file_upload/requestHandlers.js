@@ -19,8 +19,8 @@ function start(response)
         'charset=UTF-8" />'+
         '</head>'+
         '<body>'+
-        '<form action "/upload" enctype="multipart/form-data" method="post">'+
-        '<input type="file" name="upload">'+
+        '<form action="/upload" enctype="multipart/form-data" method="post">'+
+        '<input type="file" name="upload" multiple="multiple">'+
         '<input type="submit" value="Upload file" />'+
         '</form>'+
         '</body>'+
@@ -39,15 +39,16 @@ function upload(response, request)
     console.log("about to parse");
     form.parse(
         request,
-        function(erro, field, files){
+        function(error, field, files){
             console.log("parsing done");
+            console.log(files);     // check
             fs.rename(
                 files.upload.path,
                 "/tmp/test.jpg",
                 function(err){
                     if(err){
-                        fs.unlink("/tmp/test.jpg");
-                        fs.rename(files.upload.path, "/tmp/test.jpg");
+                        fs.unlink("/tmp/test.png");
+                        fs.rename(files.upload.path, "/tmp/test.png");
                     }
                 }
             );
@@ -55,9 +56,6 @@ function upload(response, request)
             response.writeHead(200, {"Content-Type": "text/html"});
             response.write("recieved image:<br>");
             response.write("<img src='/show'>");
-
-            response.writeHead(200, {"Content-Type": "text/plain"});
-            response.write("You've sent: " + querystring.parse(postData).text);
             response.end();
         }
     );
@@ -74,12 +72,12 @@ function show(response, postData)
             if (error){
                 response.writeHead(
                     500,                             // statusCode
-                    {"Content-Type": "image/jpg"}    // headers
+                    {"Content-Type": "image/png"}    // headers
                 );
                 response.write(error + "\n");
                 response.end();
             } else {
-                response.writeHead(200, {"Content-Type": "image/jpg"});
+                response.writeHead(200, {"Content-Type": "image/png"});
                 response.write(file, "binary");     // chunk[, encoding]
                 response.end();
             }
