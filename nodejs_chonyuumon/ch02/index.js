@@ -3,6 +3,8 @@
 
 http = require("http");
 fs = require("fs");
+var request;
+var response;
 
 
 //----------------------------------------
@@ -19,16 +21,18 @@ console.log("Server start!");
 //----------------------------------------
 function getFromClient(req, res)
 {
-  fs.readFile(
-    "./index.html",
-    "UTF-8",
-    function(err, data)
-    {
-      res.writeHead(200,{"Content-Type": "text/html"});
-      res.write(data);
-      res.end();
-    }
-  );
+  request = res;
+  response = res;
+  fs.readFile("./index.html", "UTF-8", writeToResponse);
 }
 
 
+//----------------------------------------
+//  Run after completion of fs.readFile
+//----------------------------------------
+function writeToResponse(err, data)
+{
+  response.writeHead(200,{"Content-Type": "text/html"});
+  response.write(data);
+  response.end();
+}
