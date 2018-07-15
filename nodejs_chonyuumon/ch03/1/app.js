@@ -70,21 +70,6 @@ function getFromClient(req, res)
 //--------------------------------------------------------------------------------
 function response_index(req, res)
 {
-  // data
-  var data = {
-    'Taro': '09-999-999',
-    'Hanako': '080-888-888',
-    'Sachiko': '080-888-888',
-    'Ichiro': '060-666-666'
-  };
-
-  var data2 = {
-    'Taro': ['taro@yamada', '09-999-999', 'Tokyo'],
-    'Hanako': ['hanako@flower', '080-888-888', 'Yokohama'],
-    'Sachiko': ['sachi@happy', '080-888-888', 'Nagoya'],
-    'Ichiro': ['Ichiro', '060-666-666', 'USA']
-  }
-
   var msg = "これはIndexページです."
   // Rendering a HTML page
   var content = ejs.render( index_page,
@@ -106,13 +91,6 @@ function response_index(req, res)
 //--------------------------------------------------------------------------------
 function response_other(req, res)
 {
-  var data2 = {
-    'Taro'   : ['taro@yamada',   '09-999-999',  'Tokyo'],
-    'Hanako' : ['hanako@flower', '080-888-888', 'Yokohama'],
-    'Sachiko': ['sachi@happy',   '080-888-888', 'Nagoya'],
-    'Ichiro' : ['Ichiro',        '060-666-666', 'USA'],
-  }
-
   var msg = "これはOtherページです."
 
   // Rendering a HTML page
@@ -129,4 +107,21 @@ function response_other(req, res)
   res.end();
 }
 
+
+//--------------------------------------------------------------------------------
+// data
+//
+
+var data = {
+  'Taro'   : '09-999-999',
+  'Hanako' : '080-888-888',
+  'Sachiko': '080-888-888',
+  'Ichiro' : '060-666-666',
+};
+var data2 = {
+  'Taro'   : ['taro@yamada',   '09-999-999',  'Tokyo'],
+  'Hanako' : ['hanako@flower', '080-888-888', 'Yokohama'],
+  'Sachiko': ['sachi@happy',   '080-888-888', 'Nagoya'],
+  'Ichiro' : ['Ichiro',        '060-666-666', 'USA'],
+}
 
