@@ -7,6 +7,7 @@ const http = require("http");
 const fs   = require("fs");
 const ejs  = require("ejs");
 const url  = require("url");
+const qs   = require("querystring");  // New
 
 
 //----------------------------------------
@@ -28,53 +29,23 @@ console.log(PORT + "port listen.");
 //----------------------------------------
 function getFromClient(req, res)
 {
-  var url_parts = url.parse(
-    req.url,  // urlString <string>
-    true  // parseQueryString <boolean>
-            // ex) http://example.com/?msg=hello
-              // true  ==> {'msg':'hello'}
-              // false ==> 'msg=hello'
-    // ref:
-    //  - https://nodejs.org/api/url.html#url_url_parse_urlstring_parsequerystring_slashesdenotehost
-  );
+  var url_parts = url.parse( req.url, true );
+  //    urlString <string>
+  //    parseQueryString <boolean>
+  //           ex) http://example.com/?msg=hello
+  //             - true  ==> {'msg':'hello'}
+  //             - false ==> 'msg=hello'
+  //    ref:
+  //     - https://nodejs.org/api/url.html#url_url_parse_urlstring_parsequerystring_slashesdenotehost
 
   switch(url_parts.pathname){
 
     case "/":
-      var content = "This is Index page."
-      // Processing query string
-      var query = url_parts.query;
-      if (query.msg != undefined){
-        var query_obj =
-          content += "You send '" + query.msg + "'.";
-      }
-      // Rendering a HTML page
-      var content = ejs.render(
-        index_page,
-        {
-          title: "Index",
-          content: content 
-        }
-      );
-      // Response Processing
-      res.writeHead(200, { "Content-Type": "text/html" });
-      res.write(content);
-      res.end();
+      response_index(req, res);
       break;
 
     case "/other":
-      // Rendering a HTML page
-      var content = ejs.render(
-        other_page,
-        {
-          title: "Otherページ",
-          content: "新しく用意したページです。"
-        }
-      );
-      // Response Processing
-      res.writeHead(200, { "Content-Type": "text/html" });
-      res.write(content);
-      res.end();
+      response_other(req, res);
       break;
 
     case "/style.css":
@@ -91,4 +62,87 @@ function getFromClient(req, res)
       break;
   }
 }
+
+
+//--------------------------------------------------------------------------------
+//  response_index
+//--------------------------------------------------------------------------------
+function response_index(req, res)
+{
+  var msg = "これはIndexページです."
+  // Rendering a HTML page
+  var content = ejs.render( index_page,
+                            {
+                              title: "Index",
+                              content: msg
+                            } );
+  // Response Processing
+  res.writeHead( 200, {"Content-Type": 'text/html'} );
+  res.write(content);
+  res.end();
+}
+
+
+//--------------------------------------------------------------------------------
+//  response_other
+//--------------------------------------------------------------------------------
+function response_other(req, res)
+{
+  var msg = "これはOtherページです."
+  if ( req.method == 'POST' ){
+    // Post Access Processing
+    var body = '';
+
+    // data Event
+    req.on('data', (data) => {
+      // ref: https://nodejs.org/api/events.html#events_emitter_on_eventname_listener
+      console.log("request.on(1)");
+      body += data;  // get post data
+    });
+
+    // end Event
+    req.on('end', () => {
+      console.log("request.on(2)");
+      var post_data = qs.parse(body);  // parse post data
+
+      //----------
+      // Check Log
+      //----------
+      // "msg=aaa+bbb", if you fill "aaa bbb" in the form.
+      console.log(body);
+      console.log(post_data);  // "msg=aaa+bbb", if you fill "aaa bbb" in the form.
+      //----------
+
+      // "msg=aaa+bbb", if you fill "aaa bbb" in the form.
+      msg += "あなたは,「" + post_data.msg + "」と書きました。";
+      // Rendering a HTML page
+      var content = ejs.render(
+        other_page,
+        {
+          title: "Other",
+          content: msg
+        }
+      );
+      res.writeHead( 200, {'Content-Type': 'text/html'} );
+      res.write(content);
+      res.end();
+    });
+  } else {
+    // Get Access Processing
+    var msg = "ページがありません.";
+    // Rendering a HTML page
+    var content = ejs.render(
+      other_page,
+      {
+        title: "Other",
+        content: msg
+      }
+    );
+    // Response Processing
+    res.writeHead( 200, {"Content-Type": 'text/html'} );
+    res.write(content);
+    res.end();
+  }
+}
+
 
