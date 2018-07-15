@@ -64,17 +64,28 @@ function getFromClient(req, res)
 }
 
 
+
 //--------------------------------------------------------------------------------
 //  response_index
 //--------------------------------------------------------------------------------
 function response_index(req, res)
 {
+  // data
+  var data = {
+    'Taro': '09-999-999',
+    'Hanako': '080-888-888',
+    'Sachiko': '080-888-888',
+    'Ichiro': '060-666-666'
+  };
+
   var msg = "これはIndexページです."
   // Rendering a HTML page
   var content = ejs.render( index_page,
                             {
                               title: "Index",
-                              content: msg
+                              content: msg,
+                              data: data,
+                              filename: 'data_item'
                             } );
   // Response Processing
   res.writeHead( 200, {"Content-Type": 'text/html'} );
