@@ -92,7 +92,8 @@ function response_index(req, res)
 
     // end event
     req.on('end', () => {
-      data = qs.parse(body);  // parse ( name="msg" --> data={msg: xxx} )
+      data = qs.parse(body);  // parse ( <xxx name="msg"> --> data={msg: xxx} )
+      setCookie('msg', data.msg, res);  // Save Cookie
       write_index(req, res);
     });
   } else {
@@ -107,17 +108,49 @@ function response_index(req, res)
 function write_index(req, res)
 {
   var msg = "伝言板を表示いたします";
+  var cookie_data = getCookie('msg', req);  // (key, req)
   // Rendering a HTML page
   var content = ejs.render( index_page,
                             {
-                              title    : "Index",
-                              content  : msg,
-                              data     : data,
+                              title       : "Index",
+                              content     : msg,
+                              data        : data,
+                              cookie_data : cookie_data,
                             } );
   // Response Processing
   res.writeHead( 200, {"Content-Type": 'text/html'} );
   res.write(content);
   res.end();
+}
+
+
+//--------------------------------------------------------------------------------
+// setCookie
+//--------------------------------------------------------------------------------
+//  - set cookie value
+function setCookie(key, value, res)
+{
+  var cookie = escape(value);
+  res.setHeader('Set-Cookie', [key + '=' + cookie]);
+}
+
+
+//--------------------------------------------------------------------------------
+// getCookie
+//--------------------------------------------------------------------------------
+//  - get cookie value
+function getCookie(key, req)
+{
+  var cookie_data = req.headers.cookie != undefined ? req.headers.cookie : '';
+  var data = cookie_data.split(';');  // split cookie data
+  for (var i in data){
+    if ( data[i].trim().startsWith( key + '=' )) {
+      // The trim() method removes whitespace from both ends of a string.
+      var result = data[i].trim().substring( key.length + 1 );
+      return unescape(result);
+    }
+  }
+  return '';
 }
 
 
