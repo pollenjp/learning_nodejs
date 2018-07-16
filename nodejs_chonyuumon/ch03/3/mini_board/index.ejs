@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8">
+    <title><%=title %></title>
+    <link type="text/css" href="./style.css" rel="stylesheet">
+    <script>
+      function init(){
+        var id = localStorage.getItem('id');
+        if ( id == null ){
+          location.href = './login';
+        }
+        document.querySelector('#id').textContent = 'ID:' + id;
+        document.querySelector('#id_input').value = id;
+      }
+    </script>
+  </head>
+  <body onload="init();">
+    <h1>
+      <%=title %>
+    </h1>
+    <div role="main">
+      <p>メッセージは最大１０個まで保存されます。</p>
+      <!--
+        --------------------------------------------------------------------------------
+        post method form
+        - Post transmission to "/"
+      -->
+      <form action="/" method="post">
+        <p>
+          <span id="id"></span>
+          <input type="hidden" id="id_input" name="id", value="">
+        </p>
+        <p>
+          <input type="text" name="msg">
+          <input type="submit" value="Submit">
+        </p>
+      </form>
+      <hr>
+      <!--
+        --------------------------------------------------------------------------------
+        Message Table
+        --------------------------------------------------------------------------------
+      -->
+      <p>
+        <table style="width:85%">
+          <% for ( var i in data ){ %>
+          <%- include('data_item', { val: data[i] } ) -%>
+          <% } %>
+        </table>
+      </p>
+    </div>
+  </body>
+</html>
+
