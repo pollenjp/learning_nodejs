@@ -1,0 +1,5 @@
+{"id":"mike","msg":"こんにちは"}
+{"id":"mike","msg":"hello"}
+{"id":"sampleuser","msg":"hello"}
+{"id":"sampleuser","msg":"bbb"}
+{"id":"sampleuser","msg":"aaa"}
